@@ -44,8 +44,9 @@ while not is_change:
             pass
         
         else:
-            # TODO: Creamos el archivo
-            pass
+            # Creamos el archivo
+            with open("web", "w") as txt:
+                txt.write(h)
 
     else:
         print("Ha ocurrido un error al crear el archivo.")
