@@ -13,7 +13,10 @@ import hashlib
 def witing(): time.sleep(30)
 
 # TODO: Descargar el codigo de la web
-def download_web(url): pass
+def download_web(url): 
+    os.makedirs("str", exist_ok=True)
+    file = os.path.join("src", os.path.basename(url))
+    wget.download(url, out=file)
 
 # Obtener el hash del archivo
 def hashing(file_path): 
