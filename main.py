@@ -14,14 +14,19 @@ def witing(): time.sleep(30)
 
 # TODO: Descargar el codigo de la web
 def download_web(url): 
-    os.makedirs("str", exist_ok=True)
-    file = os.path.join("src", os.path.basename(url))
+    os.makedirs("web", exist_ok=True)
+    file = os.path.join("web", os.path.basename(url))
     wget.download(url, out=file)
 
 # Obtener el hash del archivo
 def hashing(file_path): 
     file = open(file_path, 'rb')
     return hashlib.sha256(file.read()).hexdigest()
+
+# Eliminamos el archivo
+def deleteFile(url):
+    file = os.path.join("web", os.path.basename(url))
+    os.remove(file)
 
 # TODO: El comparar hash. 
 #       Tenemos un hash guardado? No, lo guardamos. Si, los comparamos.
