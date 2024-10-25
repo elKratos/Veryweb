@@ -37,16 +37,17 @@ while not is_change:
     path = download_web("https://fs2ps.festeweb.com/")
     
     if os.path.isfile(path):
-        h = hashing(path)
-
-        if os.path.isfile("hash"):
-            #TODO: Comparamos hash almacenado con el obtenido
-            pass
+        hash_path = "web/hash.txt"
+        actual_hash = hashing(path)
         
+        if os.path.isfile(hash_path):
+            with open(hash_path, 'rb') as hf:
+                if hf.read() != actual_hash:
+                    is_change = True
         else:
-            # Creamos el archivo
-            with open("web", "w") as txt:
-                txt.write(h)
+            with open(hash_path, "w") as txt:
+                txt.write(actual_hash)
+                deleteFile(path)
 
     else:
         print("Ha ocurrido un error al crear el archivo.")
