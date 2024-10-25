@@ -15,28 +15,40 @@ def witing(): time.sleep(30)
 # TODO: Descargar el codigo de la web
 def download_web(url): 
     os.makedirs("web", exist_ok=True)
-    file = os.path.join("web", os.path.basename(url))
-    wget.download(url, out=file)
+    path = 'web/fontcode.html'
+    
+    wget.download(url, path)
 
-# Obtener el hash del archivo
-def hashing(file_path): 
-    file = open(file_path, 'rb')
-    return hashlib.sha256(file.read()).hexdigest()
+    return path
 
 # Eliminamos el archivo
 def deleteFile(url):
     file = os.path.join("web", os.path.basename(url))
     os.remove(file)
 
-# TODO: El comparar hash. 
-#       Tenemos un hash guardado? No, lo guardamos. Si, los comparamos.
-#       El hash es igual? Si, seguimos. No, paramos de descargar y buscamos el cambio.
+# Obtener el hash del archivo
+def hashing(file_path): 
+    file = open(file_path, 'rb')
+    return hashlib.sha256(file.read()).hexdigest()
+ 
+is_change=False
 
-# TODO: Comparamos el codigo fuente y sacamos la diferencia.
-
-# TODO: Obtenemos la diferencia y la enviamos por correo.
-
-# TODO: Detenemos la aplicacion
+while not is_change:
+    path = download_web("https://fs2ps.festeweb.com/")
     
+    if os.path.isfile(path):
+        h = hashing(path)
 
-print(hashing("index.html"))
+        if os.path.isfile("hash"):
+            #TODO: Comparamos hash almacenado con el obtenido
+            pass
+        
+        else:
+            # TODO: Creamos el archivo
+            pass
+
+    else:
+        print("Ha ocurrido un error al crear el archivo.")
+        break
+
+if is_change: pass
