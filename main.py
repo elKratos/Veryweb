@@ -10,7 +10,7 @@ import hashlib
 # TODO: Puedes mejorar este programa enviando las diferencias por correo electrónico.
 
 # Esperamos 30 segundos
-def witing(): time.sleep(30)
+def waiting(): time.sleep(30)
 
 # TODO: Descargar el codigo de la web
 def download_web(url): 
@@ -22,8 +22,7 @@ def download_web(url):
     return path
 
 # Eliminamos el archivo
-def deleteFile(url):
-    file = os.path.join("web", os.path.basename(url))
+def deleteFile(file): 
     os.remove(file)
 
 # Obtener el hash del archivo
@@ -34,7 +33,7 @@ def hashing(file_path):
 is_change=False
 
 while not is_change:
-    path = download_web("https://fs2ps.festeweb.com/")
+    path = download_web("https://www.lajarina.es/")
     
     if os.path.isfile(path):
         hash_path = "web/hash.txt"
@@ -47,7 +46,8 @@ while not is_change:
         else:
             with open(hash_path, "w") as txt:
                 txt.write(actual_hash)
-                deleteFile(path)
+            deleteFile(path)
+            #waiting()
 
     else:
         print("Ha ocurrido un error al crear el archivo.")
