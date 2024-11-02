@@ -73,4 +73,14 @@ while not is_change:
 
 if is_change: 
     # TODO: Comprobar que ha cambiado del archivo
-    pass
+    with open("web/code_storage.html", 'r') as code1:
+        text1 = code1.readlines()
+
+    with open("code_changed.html", 'r') as code2:
+        text2 = code2.readlines()
+
+    diff = difflib.unified_diff(text1, text2)
+
+    with open("code_diff.txt", 'w') as f_out:
+        for line in diff:
+            f_out.write(line)
