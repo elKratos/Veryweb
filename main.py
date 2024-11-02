@@ -50,57 +50,93 @@ def writer(path, value):
 is_change=False
 
 while not is_change:
+    print("Descargando la web")
+    waiting(3)
+
     # Descargamos el cofigo de la web, y obtenemos la ruta donde se a almacenado.
-    code_path = download_web("https://www.example.com/")
+    # code_path = download_web("https://www.example.com/")
+    code_path = download_web("https://www.lajarina.es/")
     
+    
+    print("\nWeb descargada en: " + code_path)
+
     # Comprobamos que se ha descargado un archivo.
     if os.path.isfile(code_path):
         # Creamos una ruta para crear el archivo que contendra el hash de la pagina descargada.
         hash_path = PATH + "hash.txt"
 
+        print("Creando hash")
+        waiting(2)
+
         # Obtenemos el hash de la pagina actual
         current_hash = hashing(code_path)
         
+        print("Hash obtenido: " + current_hash)
+        print("Buscando archivo hash.txt")
+        waiting(3)
+
         # Si ya existe un hash.txt, lo comparamos
         if os.path.isfile(hash_path):
+            print("Se ha detectado el archivo \"hash.txt\"")
+            print("Obteninedo hash almacenado")
             # Obtenemos el hash anterior
             storage_hash = reader(hash_path)
 
+            print("Hash: "+storage_hash+" \nComparando hashes")
+            waiting(3)
+
             # Comparamos el hash actual con el almacenado.
             if storage_hash != current_hash:
+                print("Se ha encontrado una diferencia. Almacenando cambios")
+
                 # Al ser distinto, almacenamos el nuevo codigo en un nuevo archivo.   
                 os.rename(code_path, PATH + 'code_changed.html')  
-
-                # Actualizamod el antiguo hash
-                writer(hash_path, current_hash) 
                 
                 # Confirmamos que el codigo ha cambiado.
                 is_change = True
 
+            else:
+                print("No se ha encontrado diferencia: " + current_hash)
+
         # Si no existe, lo creamos, y almacenamos el codigo descargado y el hash de este.
         else:
-            os.rename(code_path, PATH + 'code_storage.html')
-            writer(hash_path, current_hash)
+            print("No se ha encontrado el arcihvo. \nCreando...")
+            waiting(3)
 
-        deleteFile(code_path)
-        waiting(10)
-        #waiting(30)
+            writer(hash_path, current_hash)
+            print("Se ha creado corectamente")
+
+            print("Almacenando codigo descargado como \"code_storage.html\"")
+            os.rename(code_path, PATH + 'code_storage.html')
+            print("Archivo guardado.")
+
+        if os.path.isfile(code_path):
+            print("Eliminando temporales.")
+            deleteFile(code_path)
+
+        if not is_change:
+            print("Esperando 30 segundos para volver a descargar...")
+            waiting(10)
+            #waiting(30)
 
     # En caso de no encontrarlo, ha ocurrido un error.
     else:
         print("Ha ocurrido un error al crear o descargar el archivo.")
         break
 
+
 if is_change: 
+    print ("Mostrando cambios.")
+    
     # TODO: Comprobar que ha cambiado del archivo
-    with open("web/code_storage.html", 'r') as code1:
+    with open(PATH + "code_storage.html", 'r') as code1:
         text1 = code1.readlines()
 
-    with open("code_changed.html", 'r') as code2:
+    with open(PATH + "code_changed.html", 'r') as code2:
         text2 = code2.readlines()
 
     diff = difflib.unified_diff(text1, text2)
 
-    with open("code_diff.txt", 'w') as f_out:
+    with open(PATH + "code_diff.txt", 'w') as f_out:
         for line in diff:
             f_out.write(line)
