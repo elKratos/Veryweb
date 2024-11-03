@@ -137,6 +137,20 @@ if is_change:
 
     diff = difflib.unified_diff(text1, text2)
 
+    after,before = "Antes:\n","Despues:\n"
+
     with open(PATH + "code_diff.txt", 'w') as f_out:
         for line in diff:
             f_out.write(line)
+
+            if line.startswith("-"): 
+                if line.strip() != "---": 
+                    line = line.replace("-", "", 1)
+                    after += line.lstrip(" ")
+
+            if line.startswith("+"): 
+                if line.strip() != "+++": 
+                    line = line.replace("+", "", 1)
+                    before += line.lstrip(" ")
+        
+        print(after + "\n\n" + before)
