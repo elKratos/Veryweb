@@ -28,7 +28,7 @@ def download_web(url):
     return path
 
 # Eliminamos el archivo
-def deleteFile(file): os.remove(file)
+def delete_file(file): os.remove(file)
 
 # Obtener el hash del archivo
 def hashing(file_path): 
@@ -37,7 +37,7 @@ def hashing(file_path):
     
 # Leemos un archivo y enviamos el contenido
 def reader(path):
-    with open(hash_path, 'r', encoding='utf-8') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         return str(f.read())
 
 # Creamos o sobrescrivimos un arcivo
@@ -124,7 +124,7 @@ while not is_change:
 
         if os.path.isfile(code_path):
             print("Eliminando temporales.")
-            deleteFile(code_path)
+            delete_file(code_path)
 
         if not is_change:
             print("Esperando 30 segundos para volver a descargar...")
