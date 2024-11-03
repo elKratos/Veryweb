@@ -45,6 +45,18 @@ def writer(path, value):
     with open(path, 'w', encoding='utf-8') as f:
         f.write(value)
 
+# Procesa y limpia el texto que vamos a mostrar
+def clean_text(text, discard_char="", discard_lines=()):
+    if text.startswith(discard_char):
+        # Solo nos interesa mostrar el texto cambiado, por lo que descartamos otras que no son necesarias.
+        if text.strip() not in discard_lines: 
+            # Quitamos solo el caracter que queremos descartar (solo el primero)
+            text = text.replace(discard_char, "", 1)
+            # Devolvemos el texto quitando los espacios del inicio
+            return text.lstrip(" ")
+    
+    return None
+
 
 # Por defecto, aun no ha cambiado nada.
 is_change=False
@@ -106,8 +118,8 @@ while not is_change:
             writer(hash_path, current_hash)
             print("Se ha creado corectamente")
 
-            print("Almacenando codigo descargado como \"code_storage.html\"")
-            os.rename(code_path, PATH + 'code_storage.html')
+            print("Almacenando codigo descargado como \"code_storaged.html\"")
+            os.rename(code_path, PATH + 'code_storaged.html')
             print("Archivo guardado.")
 
         if os.path.isfile(code_path):
@@ -116,41 +128,45 @@ while not is_change:
 
         if not is_change:
             print("Esperando 30 segundos para volver a descargar...")
-            waiting(10)
-            #waiting(30)
+            waiting(30)
 
     # En caso de no encontrarlo, ha ocurrido un error.
     else:
         print("Ha ocurrido un error al crear o descargar el archivo.")
         break
 
-
+# Si la web a cambiado, procedemos a mostrar los cambios.
 if is_change: 
     print ("Mostrando cambios.")
     
-    # TODO: Comprobar que ha cambiado del archivo
-    with open(PATH + "code_storage.html", 'r') as code1:
-        text1 = code1.readlines()
+    # Guardamos el codigo de la primera pagina
+    with open(PATH + "code_storaged.html", 'r') as code:
+        storaged = code.readlines()
 
-    with open(PATH + "code_changed.html", 'r') as code2:
-        text2 = code2.readlines()
+    # Guardamos el codigo de la pagina cambiada
+    with open(PATH + "code_changed.html", 'r') as code:
+        changed = code.readlines()
 
-    diff = difflib.unified_diff(text1, text2)
+    # Comparamos el texto y obtenemos las diferencias
+    diff = difflib.unified_diff(storaged, changed)
 
+    # Peparamos la salida de texto en el terminal
     after,before = "Antes:\n","Despues:\n"
 
     with open(PATH + "code_diff.txt", 'w') as f_out:
+        # Procesamos de linea en linea
         for line in diff:
+            # Escribimos las linas en una archivo para ver mejor las diferencias
             f_out.write(line)
 
-            if line.startswith("-"): 
-                if line.strip() != "---": 
-                    line = line.replace("-", "", 1)
-                    after += line.lstrip(" ")
+            # Si la linea empieza por "-", es la linea como era antes de que cambiara. Procesamos el texto y lo almacenamos para mostrarlo mas adelante.
+            clean_line = clean_text(line, "-", ("---"))
+            if clean_line: after += clean_line
 
-            if line.startswith("+"): 
-                if line.strip() != "+++": 
-                    line = line.replace("+", "", 1)
-                    before += line.lstrip(" ")
+            # Si la linea empieza por "+", es la linea con los cambios añadidos. Procesamos el texto y lo almacenamos para mostrarlo mas adelante.
+            clean_line = clean_text(line, "+", ("+++"))
+            if clean_line: before += clean_line
+            
         
+        # Sacamos por terminal el texto que hemos preparado. Contiene las lineas antes y despues de que cambiaran.
         print(after + "\n\n" + before)
